@@ -1,0 +1,23 @@
+{
+  "name": "ai-career-copilot",
+  "version": "2.0.0",
+  "description": "AI-powered Career Copilot and ATS Resume Analyzer built with HTML, CSS, JavaScript, Node.js, and Google Gemini API.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --env-file=.env server.js",
+    "test": "node test/test-cases.js"
+  },
+  "keywords": [
+    "ai",
+    "resume-analyzer",
+    "ats-scanner",
+    "gemini-api",
+    "career-copilot",
+    "vercel",
+    "job-search"
+  ],
+  "author": "AI Career Copilot Team",
+  "license": "MIT"
+}

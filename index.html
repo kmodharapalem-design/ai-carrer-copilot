@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI Career Copilot — AI-powered ATS resume analyzer and career coach. Score your resume against any job description, uncover missing keywords, and get actionable suggestions.">
+  <title>AI Career Copilot — Smart ATS Resume Analyzer & Career Coach</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- App Header / Hero Section -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-badge">
+        <span class="pulse-dot"></span>
+        <span>v2.0 • Powered by Gemini AI</span>
+      </div>
+      <h1 class="app-title">AI Career <span>Copilot</span></h1>
+      <p class="app-subtitle">
+        Your intelligent resume analyzer and career coach. Compare your resume against any target job description to reveal your ATS match score, detect missing keywords, and receive tailored advice to land interviews.
+      </p>
+      
+      <div class="header-features">
+        <div class="feature-pill">🎯 Instant ATS Score</div>
+        <div class="feature-pill">🔍 Technical Keyword Gaps</div>
+        <div class="feature-pill">🎓 Student & Internship Friendly</div>
+        <div class="feature-pill">🔒 Secure & Zero-Leak Architecture</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Workspace -->
+  <main class="main-content">
+
+    <!-- Quick Load Sample Bar -->
+    <section class="sample-bar" aria-label="Sample Profiles">
+      <div class="sample-bar-left">
+        <span class="icon">✨</span>
+        <span>Try an Example:</span>
+      </div>
+      <div class="sample-buttons">
+        <button type="button" class="btn-sample" id="loadSampleInternship">
+          <span>👨‍💻</span> Tech Internship Sample
+        </button>
+        <button type="button" class="btn-sample" id="loadSampleJunior">
+          <span>⚙️</span> Junior Backend Sample
+        </button>
+        <button type="button" class="btn-sample btn-clear" id="clearInputs">
+          <span>🗑️</span> Clear Fields
+        </button>
+      </div>
+    </section>
+
+    <!-- Workstation: Side-by-Side Input Panels -->
+    <section class="workspace-grid" aria-label="Resume and Job Description Inputs">
+      
+      <!-- Resume Input Panel -->
+      <article class="input-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div class="panel-icon-badge panel-icon-resume">📄</div>
+            <h2>Candidate Resume</h2>
+          </div>
+          <div class="panel-actions">
+            <button type="button" class="btn-tiny" id="pasteResumeBtn" title="Paste from clipboard">📋 Paste</button>
+            <button type="button" class="btn-tiny" id="clearResumeBtn" title="Clear resume text">Clear</button>
+          </div>
+        </div>
+        <div class="textarea-container">
+          <textarea 
+            id="resumeInput" 
+            class="rich-textarea" 
+            placeholder="Paste your resume text here...&#10;&#10;Recommended sections:&#10;• Contact Information & Links (GitHub, LinkedIn)&#10;• Education & Relevant Coursework&#10;• Technical Skills (Languages, Frameworks, Tools)&#10;• Academic / Personal Projects (with descriptions)&#10;• Experience or Leadership Activities"
+            spellcheck="false"
+          ></textarea>
+        </div>
+        <div class="panel-footer">
+          <span>Minimum 50 characters required</span>
+          <span class="stats-counter" id="resumeCounter">0 words | 0 chars</span>
+        </div>
+      </article>
+
+      <!-- Job Description Input Panel -->
+      <article class="input-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div class="panel-icon-badge panel-icon-job">💼</div>
+            <h2>Target Job Description</h2>
+          </div>
+          <div class="panel-actions">
+            <button type="button" class="btn-tiny" id="pasteJobBtn" title="Paste from clipboard">📋 Paste</button>
+            <button type="button" class="btn-tiny" id="clearJobBtn" title="Clear job description">Clear</button>
+          </div>
+        </div>
+        <div class="textarea-container">
+          <textarea 
+            id="jobDescInput" 
+            class="rich-textarea" 
+            placeholder="Paste the target job description or internship posting here...&#10;&#10;Key elements:&#10;• Job Title & Role Overview&#10;• Core Responsibilities & Duties&#10;• Required Technical Qualifications&#10;• Preferred / Nice-to-Have Skills"
+            spellcheck="false"
+          ></textarea>
+        </div>
+        <div class="panel-footer">
+          <span>Full posting recommended</span>
+          <span class="stats-counter" id="jobDescCounter">0 words | 0 chars</span>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- Action & Submit Button -->
+    <div class="action-container">
+      <button type="button" class="btn-analyze-primary" id="analyzeBtn">
+        <span class="btn-icon">🚀</span>
+        <span class="btn-text">Analyze Resume Match</span>
+        <span class="kbd-shortcut">Ctrl + Enter</span>
+      </button>
+
+      <!-- Notification / Error Box -->
+      <div class="alert-box" id="alertBox" role="alert">
+        <div class="alert-icon" id="alertIcon">⚠️</div>
+        <div class="alert-content">
+          <h4 id="alertTitle">Notice</h4>
+          <p id="alertMessage">Please provide both your resume and target job description.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State Visualizer -->
+    <section class="loading-wrapper" id="loadingWrapper" aria-live="polite">
+      <div class="spinner-ring"></div>
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--primary-900); margin-bottom: 6px;">
+        AI Career Copilot is Analyzing Your Profile...
+      </h3>
+      <p style="font-size: 0.9rem; color: var(--primary-500);">
+        Evaluating ATS compliance, mapping skill taxonomies, and formulating personalized coaching feedback.
+      </p>
+
+      <div class="loading-steps">
+        <div class="step-item active" id="step1">
+          <span class="step-bullet">1</span>
+          <span>Parsing resume structure & technical competencies...</span>
+        </div>
+        <div class="step-item" id="step2">
+          <span class="step-bullet">2</span>
+          <span>Matching against target job description requirements...</span>
+        </div>
+        <div class="step-item" id="step3">
+          <span class="step-bullet">3</span>
+          <span>Detecting keyword gaps & generating actionable career advice...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Presentation Section -->
+    <section class="results-section" id="resultsSection" aria-label="Analysis Results">
+      
+      <!-- Scorecard Hero Card -->
+      <article class="scorecard-card">
+        <div class="gauge-container">
+          <div class="circular-gauge">
+            <svg viewBox="0 0 160 160">
+              <circle class="gauge-bg" cx="80" cy="80" r="68"></circle>
+              <circle class="gauge-progress" id="gaugeCircle" cx="80" cy="80" r="68" stroke-dasharray="427.26" stroke-dashoffset="427.26"></circle>
+            </svg>
+            <div class="gauge-inner-text">
+              <span class="score-value" id="scoreDisplay">0</span>
+              <span class="score-max">/ 100</span>
+            </div>
+          </div>
+          <div class="score-badge badge-strong" id="matchTierBadge">Strong Match</div>
+        </div>
+
+        <div class="scorecard-details">
+          <h3>ATS Compatibility Scorecard</h3>
+          <p class="scorecard-summary" id="scorecardSummary">
+            Detailed assessment will appear here after analysis.
+          </p>
+          <div class="experience-card-inline">
+            <strong>📁 Relevant Experience & Project Alignment:</strong>
+            <span id="experienceAssessmentText">Evaluating candidate project depth and applicability...</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Skills Matrix: Matched vs Missing Technical Keywords -->
+      <section class="skills-matrix-grid">
+        
+        <!-- Matched Skills -->
+        <article class="matrix-card">
+          <div class="matrix-card-header">
+            <div class="matrix-card-title">
+              <span>✅</span> Matching Skills & Strengths
+            </div>
+            <span class="matrix-badge-count count-matched" id="matchedCount">0 Found</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--primary-500); margin-bottom: 14px;">
+            Technologies and core competencies found in both your resume and the job posting:
+          </p>
+          <div class="chips-container" id="matchedChips">
+            <!-- Dynamic Chips -->
+          </div>
+        </article>
+
+        <!-- Missing Keywords & Technical Gaps -->
+        <article class="matrix-card">
+          <div class="matrix-card-header">
+            <div class="matrix-card-title">
+              <span>⚠️</span> Missing Technical Keywords
+            </div>
+            <span class="matrix-badge-count count-missing" id="missingCount">0 Gaps</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--primary-500); margin-bottom: 14px;">
+            High-priority keywords requested by the recruiter that are missing from your resume:
+          </p>
+          <div class="missing-keywords-list" id="missingKeywordsList">
+            <!-- Dynamic Missing Keyword Cards -->
+          </div>
+        </article>
+
+      </section>
+
+      <!-- Deep Diagnostic Insights: Strengths, Areas for Improvement, Actionable Suggestions -->
+      <section class="insights-grid">
+        
+        <!-- Strengths Card -->
+        <article class="insight-card">
+          <h4><span>🌟</span> Resume Strengths</h4>
+          <ul class="bullet-list" id="strengthsList">
+            <!-- Dynamic Strengths -->
+          </ul>
+        </article>
+
+        <!-- Areas for Improvement Card -->
+        <article class="insight-card">
+          <h4><span>📈</span> Areas That Need Improvement</h4>
+          <ul class="bullet-list" id="improvementsList">
+            <!-- Dynamic Improvements -->
+          </ul>
+        </article>
+
+        <!-- Student & Internship Specific Suggestions -->
+        <article class="insight-card insight-card-full">
+          <h4><span>💡</span> Personalized Action Plan (Internships & Early Career)</h4>
+          <p style="font-size: 0.875rem; color: var(--primary-600); margin-bottom: 14px;">
+            Honest, practical recommendations to elevate your resume without fabricating credentials:
+          </p>
+          <ul class="bullet-list" id="suggestionsList">
+            <!-- Dynamic Suggestions -->
+          </ul>
+        </article>
+
+      </section>
+
+      <!-- Results Action Toolbar -->
+      <div class="toolbar-container">
+        <button type="button" class="btn-secondary" id="copyReportBtn">
+          <span>📋</span> Copy Full Report to Clipboard
+        </button>
+        <button type="button" class="btn-secondary" id="printReportBtn">
+          <span>🖨️</span> Print / Save as PDF
+        </button>
+        <button type="button" class="btn-secondary" id="newAnalysisBtn">
+          <span>🔄</span> Re-analyze or Edit Inputs
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Toast Notification Popover -->
+  <aside class="toast-notice" id="toastNotice" role="status">
+    <span>✅</span>
+    <span id="toastText">Report copied to clipboard!</span>
+  </aside>
+
+  <!-- Application Footer -->
+  <footer class="app-footer">
+    <p><strong>AI Career Copilot</strong> • Intelligent ATS Resume Analyzer & Career Coaching Platform</p>
+    <p>Built with Vanilla HTML, CSS, JavaScript & Google Gemini API • Serverless Architecture on Vercel</p>
+    <p style="margin-top: 6px; font-size: 0.8rem; color: var(--primary-400);">
+      Confidentiality Note: Your resume and job description are evaluated securely via server-side API proxy. Never committed to client logs.
+    </p>
+  </footer>
+
+  <!-- Application Logic Modules -->
+  <script type="module" src="js/app.js"></script>
+
+</body>
+</html>
